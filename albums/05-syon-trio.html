@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SYON TRIO — Luma Benincá</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:#fff;color:#000;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;overflow-x:hidden;}
+a{text-decoration:none;color:inherit;}
+
+/* NAV */
+.nav{padding:10px 28px;font-size:13px;letter-spacing:0.02em;text-transform:uppercase;display:flex;gap:0;align-items:center;border-bottom:1px solid #e8e8e8;position:sticky;top:0;background:#fff;z-index:100;}
+.nav a{font-weight:900;font-size:13px;text-transform:uppercase;}
+.nav-sep{margin:0 6px;font-weight:900;}
+
+/* HEADER */
+.album-header{
+  padding:48px 28px 28px;
+  border-bottom:1px solid #000;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+}
+.album-num{font-size:11px;font-weight:700;letter-spacing:0.18em;color:#999;}
+.album-title{font-size:clamp(32px,5vw,72px);font-weight:900;letter-spacing:-0.02em;line-height:1;text-transform:uppercase;}
+.album-sub{font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#666;margin-top:6px;}
+.album-count{font-size:11px;font-weight:700;letter-spacing:0.12em;color:#999;text-align:right;}
+
+/* GRID */
+.photo-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  padding:20px 32px;
+}
+@media(max-width:768px){
+  .photo-grid{grid-template-columns:repeat(2,1fr);padding:12px 16px;}
+}
+@media(max-width:480px){
+  .photo-grid{grid-template-columns:1fr;}
+}
+.photo-item{
+  position:relative;
+  overflow:hidden;
+  background:#e4e2de;
+  aspect-ratio:9/16;
+  cursor:default;
+}
+.photo-item img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .7s ease;
+}
+.photo-item:hover img{transform:scale(1.05);}
+.photo-item video{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .7s ease;
+}
+.photo-item:hover video{transform:scale(1.05);}
+.video-badge{
+  position:absolute;bottom:8px;right:8px;
+  background:rgba(0,0,0,0.55);color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:0.1em;
+  padding:2px 6px;border-radius:2px;
+  pointer-events:none;z-index:2;
+}
+
+/* EMPTY STATE */
+.empty{
+  padding:80px 28px;
+  text-align:center;
+  color:#bbb;
+}
+.empty p{font-size:13px;letter-spacing:0.08em;text-transform:uppercase;}
+
+/* LIGHTBOX */
+.lb{
+  position:fixed;inset:0;background:rgba(0,0,0,0.95);
+  z-index:999;display:none;
+  align-items:center;justify-content:center;
+}
+.lb.active{display:flex;}
+.lb-img{max-width:92vw;max-height:92vh;object-fit:contain;display:block;}
+.lb-close{
+  position:fixed;top:20px;right:24px;
+  font-size:28px;color:#fff;cursor:default;
+  font-weight:300;line-height:1;z-index:1001;
+}
+.lb-prev,.lb-next{
+  position:fixed;top:50%;transform:translateY(-50%);
+  font-size:24px;color:#fff;cursor:default;
+  background:none;border:none;padding:20px;
+  font-weight:300;z-index:1001;
+}
+.lb-prev{left:8px;}
+.lb-next{right:8px;}
+
+/* FOOTER */
+.footer{margin-top:80px;padding:18px 28px;border-top:1px solid #e0e0e0;display:flex;justify-content:space-between;align-items:center;}
+.footer p{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#888;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="../index.html">← LUMA BENINCÁ</a>
+  <span class="nav-sep">/</span>
+  <span>SYON TRIO</span>
+</nav>
+
+<div class="album-header">
+  <div>
+    <div class="album-num">(05)</div>
+    <div class="album-title">SYON TRIO</div>
+    
+  </div>
+  <div class="album-count" id="photo-count"></div>
+</div>
+
+<div class="photo-grid" id="photo-grid"></div>
+
+<!-- LIGHTBOX -->
+<div class="lb" id="lb">
+  <span class="lb-close" onclick="closeLb()">✕</span>
+  <button class="lb-prev" onclick="lbNav(-1)">&#8592;</button>
+  <div id="lb-media"></div>
+  <button class="lb-next" onclick="lbNav(1)">&#8594;</button>
+</div>
+
+<footer class="footer">
+  <p>Luma Benincá Photography © 2025</p>
+  <p>SP ___ RJ ___ ES</p>
+</footer>
+
+<script>
+// ─────────────────────────────────────────────
+// ADICIONE OS NOMES DAS SUAS FOTOS/VÍDEOS AQUI:
+// Coloque os arquivos na pasta: images/albums/syon-trio/
+// Aceita: .jpg e .mp4
+// ─────────────────────────────────────────────
+const photos = [
+  'DSC00061.jpg',
+  'DSC00095 2.JPG',
+  'DSC00095 3.JPG',
+  'DSC00166 2.jpg',
+  'DSC00166.jpg',
+  'DSC00198 2.jpg',
+  'DSC00198.jpg',
+  'DSC00222 2.jpg',
+  'DSC00222.jpg',
+  'DSC04335 2.jpg',
+  'DSC04335.jpg',
+  'DSC04547 2.jpg',
+  'DSC04547.jpg',
+  'DSC04770.jpg',
+  'DSC05171 2.JPG',
+  'DSC05171.JPG',
+  'DSC05272 2.jpg',
+  'DSC05272.jpg',
+  'DSC05324.jpg',
+  'DSC05686.jpg',
+  'DSC05820 2.jpg',
+  'DSC05820.jpg',
+  'DSC05843 2.jpg',
+  'DSC05843.jpg',
+  'DSC05873.jpg',
+  'DSC07356 2.jpg',
+  'DSC07356.jpg',
+  'DSC07364 2.jpg',
+  'DSC07364.jpg',
+  'DSC07369 2.jpg',
+  'DSC07369.jpg',
+  'DSC07383 2.JPG',
+  'DSC07383.JPG',
+  'DSC07400 2.jpg',
+  'DSC07400.jpg',
+  'DSC07418 2.JPG',
+  'DSC07418.JPG',
+  'DSC07420 2.jpg',
+  'DSC07420.jpg',
+  'DSC07428_Afterlight 2.jpg',
+  'DSC07428_Afterlight.jpg',
+  'DSC07447.jpg',
+  'DSC07468.jpg',
+  'DSC07482.jpg',
+  'DSC07525.jpg',
+  'DSC07537.jpg',
+  'DSC07550.jpg',
+  'DSC07570 2.jpg',
+  'DSC07570.jpg',
+  'DSC07574 2.JPG',
+  'DSC07574.JPG',
+  'DSC07579.jpg',
+  'DSC07582 2.jpg',
+  'DSC07582.jpg',
+  'DSC07588 2.jpg',
+  'DSC07588.jpg',
+  'DSC07591 2.jpg',
+  'DSC07591.jpg',
+  'DSC07604 2.jpg',
+  'DSC07604.jpg',
+  'DSC07610 2.jpg',
+  'DSC07610.jpg',
+  'DSC07616 2.jpg',
+  'DSC07616.jpg',
+  'DSC07623 2.JPG',
+  'DSC07623.JPG',
+  'DSC07626 2.JPG',
+  'DSC07632 2.jpg',
+  'DSC07637 2.JPG',
+  'DSC07637.JPG',
+  'DSC07794 2.jpg',
+  'DSC07794.jpg',
+  'DSC08124 2.JPG',
+  'DSC08124.JPG',
+  'DSC08125 2.JPG',
+  'DSC08125.JPG',
+  'DSC08282 2.jpg',
+  'DSC08282.jpg',
+  'DSC08561.jpg',
+  'DSC08634 2.jpg',
+  'DSC08634.jpg',
+  'DSC08688.jpg',
+  'DSC09854 2.jpg',
+  'DSC09854.jpg',
+  'DSC09932 2.jpg',
+  'DSC09932.jpg',
+  'DSC09938.JPG',
+  'DSC09997 2.jpg',
+  'DSC09997.jpg',
+  'IMG_0439.JPG',
+  'IMG_4276.jpg',
+];
+// ─────────────────────────────────────────────
+
+const BASE = '../images/albums/syon-trio/';
+const grid = document.getElementById('photo-grid');
+const countEl = document.getElementById('photo-count');
+
+function isVideo(name){ const n=name.toLowerCase(); return n.endsWith('.mp4')||n.endsWith('.mov'); }
+
+if (photos.length === 0) {
+  grid.innerHTML = '<div class="empty"><p>Em breve</p></div>';
+  grid.style.display = 'block';
+} else {
+  countEl.textContent = photos.length + (photos.length === 1 ? ' arquivo' : ' arquivos');
+  photos.forEach((name, i) => {
+    const item = document.createElement('div');
+    item.className = 'photo-item';
+    if (isVideo(name)) {
+      const preview = BASE + 'preview/' + name;
+      item.innerHTML = `<video src="${preview}" muted loop playsinline preload="metadata"></video><span class="video-badge">▶</span>`;
+    } else {
+      item.innerHTML = `<img src="${BASE}${name}" alt="" loading="lazy">`;
+    }
+    item.onclick = () => openLb(i);
+    grid.appendChild(item);
+  });
+}
+
+
+// Hover preview em vídeos
+grid.addEventListener('mouseover', e => {
+  const item = e.target.closest('.photo-item');
+  if (!item) return;
+  const v = item.querySelector('video');
+  if (v && v.paused) v.play();
+});
+grid.addEventListener('mouseout', e => {
+  const item = e.target.closest('.photo-item');
+  if (!item) return;
+  const v = item.querySelector('video');
+  if (v && !v.paused) { v.pause(); v.currentTime = 0; }
+});
+// Lightbox
+let current = 0;
+function openLb(i) {
+  current = i;
+  showLbItem(i);
+  document.getElementById('lb').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function showLbItem(i) {
+  const lb = document.getElementById('lb-media');
+  const name = photos[i];
+  if (isVideo(name)) {
+    lb.innerHTML = `<video src="${BASE}${name}" controls autoplay style="max-width:92vw;max-height:92vh;display:block;"></video>`;
+  } else {
+    lb.innerHTML = `<img src="${BASE}${name}" alt="" style="max-width:92vw;max-height:92vh;object-fit:contain;display:block;">`;
+  }
+}
+function closeLb() {
+  document.getElementById('lb').classList.remove('active');
+  document.getElementById('lb-media').innerHTML = '';
+  document.body.style.overflow = '';
+}
+function lbNav(dir) {
+  current = (current + dir + photos.length) % photos.length;
+  showLbItem(current);
+}
+document.getElementById('lb').addEventListener('click', function(e) {
+  if (e.target === this) closeLb();
+});
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lb').classList.contains('active')) return;
+  if (e.key === 'Escape') closeLb();
+  if (e.key === 'ArrowLeft') lbNav(-1);
+  if (e.key === 'ArrowRight') lbNav(1);
+});
+</script>
+</body>
+</html>

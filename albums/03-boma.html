@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOMA© — Luma Benincá</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:#fff;color:#000;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;overflow-x:hidden;}
+a{text-decoration:none;color:inherit;}
+
+/* NAV */
+.nav{padding:10px 28px;font-size:13px;letter-spacing:0.02em;text-transform:uppercase;display:flex;gap:0;align-items:center;border-bottom:1px solid #e8e8e8;position:sticky;top:0;background:#fff;z-index:100;}
+.nav a{font-weight:900;font-size:13px;text-transform:uppercase;}
+.nav-sep{margin:0 6px;font-weight:900;}
+
+/* HEADER */
+.album-header{
+  padding:48px 28px 28px;
+  border-bottom:1px solid #000;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+}
+.album-num{font-size:11px;font-weight:700;letter-spacing:0.18em;color:#999;}
+.album-title{font-size:clamp(32px,5vw,72px);font-weight:900;letter-spacing:-0.02em;line-height:1;text-transform:uppercase;}
+.album-sub{font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#666;margin-top:6px;}
+.album-count{font-size:11px;font-weight:700;letter-spacing:0.12em;color:#999;text-align:right;}
+
+/* GRID */
+.photo-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  padding:20px 32px;
+}
+@media(max-width:768px){
+  .photo-grid{grid-template-columns:repeat(2,1fr);padding:12px 16px;}
+}
+@media(max-width:480px){
+  .photo-grid{grid-template-columns:1fr;}
+}
+.photo-item{
+  position:relative;
+  overflow:hidden;
+  background:#e4e2de;
+  aspect-ratio:9/16;
+  cursor:default;
+}
+.photo-item img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .7s ease;
+}
+.photo-item:hover img{transform:scale(1.05);}
+.photo-item video{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .7s ease;
+}
+.photo-item:hover video{transform:scale(1.05);}
+.video-badge{
+  position:absolute;bottom:8px;right:8px;
+  background:rgba(0,0,0,0.55);color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:0.1em;
+  padding:2px 6px;border-radius:2px;
+  pointer-events:none;z-index:2;
+}
+
+/* EMPTY STATE */
+.empty{
+  padding:80px 28px;
+  text-align:center;
+  color:#bbb;
+}
+.empty p{font-size:13px;letter-spacing:0.08em;text-transform:uppercase;}
+
+/* LIGHTBOX */
+.lb{
+  position:fixed;inset:0;background:rgba(0,0,0,0.95);
+  z-index:999;display:none;
+  align-items:center;justify-content:center;
+}
+.lb.active{display:flex;}
+.lb-img{max-width:92vw;max-height:92vh;object-fit:contain;display:block;}
+.lb-close{
+  position:fixed;top:20px;right:24px;
+  font-size:28px;color:#fff;cursor:default;
+  font-weight:300;line-height:1;z-index:1001;
+}
+.lb-prev,.lb-next{
+  position:fixed;top:50%;transform:translateY(-50%);
+  font-size:24px;color:#fff;cursor:default;
+  background:none;border:none;padding:20px;
+  font-weight:300;z-index:1001;
+}
+.lb-prev{left:8px;}
+.lb-next{right:8px;}
+
+/* FOOTER */
+.footer{margin-top:80px;padding:18px 28px;border-top:1px solid #e0e0e0;display:flex;justify-content:space-between;align-items:center;}
+.footer p{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#888;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="../index.html">← LUMA BENINCÁ</a>
+  <span class="nav-sep">/</span>
+  <span>BOMA©</span>
+</nav>
+
+<div class="album-header">
+  <div>
+    <div class="album-num">(03)</div>
+    <div class="album-title">BOMA©</div>
+    
+  </div>
+  <div class="album-count" id="photo-count"></div>
+</div>
+
+<div class="photo-grid" id="photo-grid"></div>
+
+<!-- LIGHTBOX -->
+<div class="lb" id="lb">
+  <span class="lb-close" onclick="closeLb()">✕</span>
+  <button class="lb-prev" onclick="lbNav(-1)">&#8592;</button>
+  <div id="lb-media"></div>
+  <button class="lb-next" onclick="lbNav(1)">&#8594;</button>
+</div>
+
+<footer class="footer">
+  <p>Luma Benincá Photography © 2025</p>
+  <p>SP ___ RJ ___ ES</p>
+</footer>
+
+<script>
+// ─────────────────────────────────────────────
+// ADICIONE OS NOMES DAS SUAS FOTOS/VÍDEOS AQUI:
+// Coloque os arquivos na pasta: images/albums/shui/
+// Aceita: .jpg e .mp4
+// ─────────────────────────────────────────────
+const photos = [
+  'BOM02.jpg',
+  'DSC00031 2.jpg',
+  'DSC00031.jpg',
+  'DSC00037 2.jpg',
+  'DSC00037.jpg',
+  'DSC00051 2.JPG',
+  'DSC00051.JPG',
+  'DSC00056 2.jpg',
+  'DSC00056.jpg',
+  'DSC00076 2.JPG',
+  'DSC00076.JPG',
+  'DSC00082 2.JPG',
+  'DSC00082.JPG',
+  'DSC00083 2.jpg',
+  'DSC00083.jpg',
+  'DSC00106 2.jpg',
+  'DSC00106.jpg',
+  'DSC00554 2.jpg',
+  'DSC00554 3.jpg',
+  'DSC00594 3.jpg',
+  'DSC00594 4.jpg',
+  'DSC00612.jpg',
+  'DSC00647 2.jpg',
+  'DSC00647.jpg',
+  'DSC00675 2.JPG',
+  'DSC00675 3.JPG',
+  'DSC00738.JPG',
+  'DSC00781 2.JPG',
+  'DSC00781.JPG',
+  'DSC00983 3.JPG',
+  'DSC00983 4.JPG',
+  'DSC00983 5.JPG',
+  'DSC00998 2.JPG',
+  'DSC00998.JPG',
+  'DSC01104 2.JPG',
+  'DSC01104.JPG',
+  'DSC01161 2.JPG',
+  'DSC01161.JPG',
+  'DSC01308 2.jpg',
+  'DSC01308.jpg',
+  'DSC01381 2.JPG',
+  'DSC01381.JPG',
+  'DSC01384 2.jpg',
+  'DSC01384.jpg',
+  'DSC01427 2.JPG',
+  'DSC01427.JPG',
+  'DSC01470.jpg',
+  'DSC01750 2.jpg',
+  'DSC01750.jpg',
+  'DSC02199 2.JPG',
+  'DSC02199.JPG',
+  'DSC02214 2.JPG',
+  'DSC02214.JPG',
+  'DSC02281 2.JPG',
+  'DSC02281.JPG',
+  'DSC02398 2.JPG',
+  'DSC02398.JPG',
+  'DSC02401.jpg',
+  'DSC02416 2.jpg',
+  'DSC02416.jpg',
+  'DSC02421 2.jpg',
+  'DSC02421.jpg',
+  'DSC02448 2.JPG',
+  'DSC02448.JPG',
+  'DSC02463 2.JPG',
+  'DSC02463.JPG',
+  'DSC02485 2.JPG',
+  'DSC02485.JPG',
+  'DSC02518 2.jpg',
+  'DSC02518.jpg',
+  'DSC03304 2.jpg',
+  'DSC03304.jpg',
+  'DSC04274 2.jpg',
+  'DSC04274.jpg',
+  'DSC04402.jpg',
+  'DSC05584 2.jpg',
+  'DSC05632 3.jpg',
+  'DSC05632 4.jpg',
+  'DSC07042 2.JPG',
+  'DSC07042.JPG',
+  'DSC07055 2.jpg',
+  'DSC07055.jpg',
+  'DSC07196.jpg',
+  'DSC07213.jpg',
+  'DSC07402 2.JPG',
+  'DSC07402.JPG',
+  'DSC07412 2.JPG',
+  'DSC07412.JPG',
+  'DSC07717 2.JPG',
+  'DSC07717.JPG',
+  'DSC07919 2.jpg',
+  'DSC07919 3.jpg',
+  'DSC07931 2.JPG',
+  'DSC07931.JPG',
+  'DSC07934 2.jpg',
+  'DSC07934.jpg',
+  'DSC08047 2.JPG',
+  'DSC08047.JPG',
+  'DSC08064.jpg',
+  'DSC08123 2.JPG',
+  'DSC08139 2.jpg',
+  'DSC08139.jpg',
+  'DSC08193 2.JPG',
+  'DSC08193.JPG',
+  'DSC09805.jpg',
+  'DSC09830.JPG',
+  'DSC09913.jpg',
+  'DSC09924 2.jpg',
+  'DSC09924.jpg',
+  'DSC09979.JPG',
+  'DSC09999 2.JPG',
+  'DSC09999.JPG',
+  'F0B50D8A-F7A1-4778-84AD-D305C8F02633 2.JPG',
+  'F0B50D8A-F7A1-4778-84AD-D305C8F02633.JPG',
+  'IMG_6480 2.jpg',
+  'IMG_6480 3.jpg',
+  'Ilustração_Sem_Título 10.jpg',
+  'Ilustração_Sem_Título 3.jpg',
+  'Ilustração_Sem_Título 8.JPG',
+  'Ilustração_Sem_Título 9.jpg',
+  'Imagem 3.JPG',
+  'lumabeninc1 2.jpg',
+  'lumabeninc1.jpg',
+  'lumabeninc_BOMA0303-1 3.jpg',
+  'lumabeninc_BOMA0303-1 4.jpg',
+];
+// ─────────────────────────────────────────────
+
+const BASE = '../images/albums/boma/';
+const grid = document.getElementById('photo-grid');
+const countEl = document.getElementById('photo-count');
+
+function isVideo(name){ const n=name.toLowerCase(); return n.endsWith('.mp4')||n.endsWith('.mov'); }
+
+if (photos.length === 0) {
+  grid.innerHTML = '<div class="empty"><p>Em breve</p></div>';
+  grid.style.display = 'block';
+} else {
+  countEl.textContent = photos.length + (photos.length === 1 ? ' arquivo' : ' arquivos');
+  photos.forEach((name, i) => {
+    const item = document.createElement('div');
+    item.className = 'photo-item';
+    if (isVideo(name)) {
+      const preview = BASE + 'preview/' + name;
+      item.innerHTML = `<video src="${preview}" muted loop playsinline preload="metadata"></video><span class="video-badge">▶</span>`;
+    } else {
+      item.innerHTML = `<img src="${BASE}${name}" alt="" loading="lazy">`;
+    }
+    item.onclick = () => openLb(i);
+    grid.appendChild(item);
+  });
+}
+
+
+// Hover preview em vídeos
+grid.addEventListener('mouseover', e => {
+  const item = e.target.closest('.photo-item');
+  if (!item) return;
+  const v = item.querySelector('video');
+  if (v && v.paused) v.play();
+});
+grid.addEventListener('mouseout', e => {
+  const item = e.target.closest('.photo-item');
+  if (!item) return;
+  const v = item.querySelector('video');
+  if (v && !v.paused) { v.pause(); v.currentTime = 0; }
+});
+// Lightbox
+let current = 0;
+function openLb(i) {
+  current = i;
+  showLbItem(i);
+  document.getElementById('lb').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function showLbItem(i) {
+  const lb = document.getElementById('lb-media');
+  const name = photos[i];
+  if (isVideo(name)) {
+    lb.innerHTML = `<video src="${BASE}${name}" controls autoplay style="max-width:92vw;max-height:92vh;display:block;"></video>`;
+  } else {
+    lb.innerHTML = `<img src="${BASE}${name}" alt="" style="max-width:92vw;max-height:92vh;object-fit:contain;display:block;">`;
+  }
+}
+function closeLb() {
+  document.getElementById('lb').classList.remove('active');
+  document.getElementById('lb-media').innerHTML = '';
+  document.body.style.overflow = '';
+}
+function lbNav(dir) {
+  current = (current + dir + photos.length) % photos.length;
+  showLbItem(current);
+}
+document.getElementById('lb').addEventListener('click', function(e) {
+  if (e.target === this) closeLb();
+});
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lb').classList.contains('active')) return;
+  if (e.key === 'Escape') closeLb();
+  if (e.key === 'ArrowLeft') lbNav(-1);
+  if (e.key === 'ArrowRight') lbNav(1);
+});
+</script>
+</body>
+</html>

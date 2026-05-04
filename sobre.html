@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sobre — Luma Benincá</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:#fff;color:#000;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;overflow-x:hidden;}
+*{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif !important;font-weight:700 !important;}
+a{text-decoration:none;color:inherit;}
+
+.nav{
+  padding:6px 16px;
+  display:flex;align-items:center;
+  border-bottom:1px solid #e8e8e8;
+  position:sticky;top:0;background:#fff;z-index:100;
+  height:32px;
+}
+.nav a{font-weight:900;font-size:13px;text-transform:uppercase;}
+
+.sobre{
+  display:flex;
+  align-items:flex-start;
+  gap:48px;
+  padding:80px 28px;
+}
+.sobre-img{
+  flex:0 0 auto;
+  width:clamp(220px,28vw,380px);
+}
+.sobre-img img{
+  width:100%;
+  height:auto;
+  display:block;
+  border:1px solid #000;
+}
+.sobre-text{
+  flex:1;
+  padding-top:4px;
+}
+.sobre-text p{
+  font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+  font-size:clamp(15px,1.6vw,22px);
+  font-weight:700;
+  line-height:1.55;
+  letter-spacing:-0.01em;
+  color:#000;
+}
+
+@media(max-width:640px){
+  .sobre{flex-direction:column;}
+  .sobre-img{width:100%;}
+}
+
+.footer{margin-top:80px;padding:18px 28px;border-top:1px solid #e0e0e0;display:flex;justify-content:space-between;align-items:center;}
+.footer p{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#888;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html">←</a>
+</nav>
+
+<div class="sobre">
+  <div class="sobre-img">
+    <img src="images/sobre.jpg" alt="Luma Benincá">
+  </div>
+  <div class="sobre-text">
+    <p>Luma Benincá. 27 anos.<br>
+    Fotógrafa e tatuadora<br>
+    baseada em São Paulo e Vitória (ES).<br>
+    Meu trabalho passa pela moda,<br>
+    produtos e eventos.<br>
+    Focada em estética minimalista, informações visuais organizadas e<br>
+    harmonia de cores.<br>
+    Disponível para viagens e produções.</p>
+  </div>
+</div>
+
+<footer class="footer">
+  <p>Luma Benincá Photography © 2025</p>
+  <p>SP ___ RJ ___ ES</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio — Luma Benincá</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:#fff;color:#000;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;overflow-x:hidden;}
+a{text-decoration:none;color:inherit;}
+
+/* NAV */
+.nav{
+  padding:6px 16px;
+  display:flex;align-items:center;
+  border-bottom:1px solid #e8e8e8;
+  position:sticky;top:0;background:#fff;z-index:100;
+  height:32px;
+}
+.nav a{font-weight:900;font-size:13px;text-transform:uppercase;}
+
+/* GRID */
+.full-grid{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  grid-auto-rows:260px;
+  gap:2px;
+}
+@media(max-width:768px){.full-grid{grid-template-columns:repeat(3,1fr);}}
+
+.fg{overflow:hidden;cursor:default;background:#e4e2de;position:relative;display:block;}
+.fg img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s ease;}
+.fg:hover img{transform:scale(1.05);}
+
+.fg-label{
+  position:absolute;inset:0;
+  background:rgba(0,0,0,0.45);
+  color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:1rem;
+  opacity:0;transition:opacity .25s ease;
+  pointer-events:none;z-index:2;
+  flex-direction:column;
+}
+.fg:hover .fg-label{opacity:1;}
+.lbl-bold{
+  font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+  font-weight:900;letter-spacing:0.06em;
+  font-size:clamp(13px,1.15vw,18px);
+  line-height:1.05;text-transform:uppercase;display:block;
+}
+.lbl-bold+.lbl-bold{margin-top:0.05em;}
+.lbl-small{
+  font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+  font-weight:900;letter-spacing:0.12em;
+  font-size:clamp(9px,0.78vw,12px);
+  line-height:1.2;display:block;
+  margin-top:0.5em;text-transform:uppercase;
+}
+.fg-num{
+  position:absolute;top:8px;left:10px;z-index:3;
+  font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+  font-weight:700;font-size:clamp(11px,0.9vw,13px);
+  letter-spacing:0.02em;color:#fff;
+  pointer-events:none;user-select:none;
+}
+.fg-plus-sign{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+  font-weight:900;font-size:clamp(80px,12vw,160px);
+  color:#fff;mix-blend-mode:difference;
+  z-index:3;line-height:1;
+  pointer-events:none;user-select:none;
+}
+
+/* FOOTER */
+.footer{margin-top:40px;padding:18px 28px;border-top:1px solid #e0e0e0;display:flex;justify-content:space-between;align-items:center;}
+.footer p{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#888;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html">←</a>
+</nav>
+
+<div class="full-grid">
+  <a class="fg" href="albums/01-mitta.html"><span class="fg-num">01</span><img src="images/covers/01-mitta.jpg" alt=""><div class="fg-label"><span class="lbl-bold">MITTA</span></div></a>
+  <a class="fg" href="albums/02-nowdays.html"><span class="fg-num">02</span><img src="images/covers/02-nowdays.jpg" alt=""><div class="fg-label"><span class="lbl-bold">Nowdays</span><span class="lbl-small">talks</span></div></a>
+  <a class="fg" href="albums/03-boma.html"><span class="fg-num">03</span><img src="images/covers/03-boma.jpg" alt=""><div class="fg-label"><span class="lbl-bold">BOMA©</span></div></a>
+  <a class="fg" href="albums/12-tyler.html"><span class="fg-num">04</span><img src="images/covers/12-tyler.jpg" alt=""><div class="fg-label"><span class="lbl-bold">TYLER</span><span class="lbl-small">THE CREATOR</span></div></a>
+  <a class="fg" href="albums/05-syon-trio.html"><span class="fg-num">05</span><img src="images/covers/05-syon-trio.jpg" alt=""><div class="fg-label"><span class="lbl-bold">SYON TRIO</span></div></a>
+  <a class="fg" href="albums/06-zeze-motta.html"><span class="fg-num">06</span><img src="images/covers/06-zeze-motta.jpg" alt=""><div class="fg-label"><span class="lbl-bold">ZEZÉ MOTTA</span><span class="lbl-small">BAILE VOGUE</span><span class="lbl-small">CARNAVAL</span></div></a>
+  <a class="fg" href="albums/15-lezalez.html"><span class="fg-num">07</span><img src="images/covers/15-lezalez.jpg" alt=""><div class="fg-label"><span class="lbl-bold">BACKSTAGE</span><span class="lbl-small">LEZALEZ</span><span class="lbl-small">MONTEIRO PRODUTORA</span></div></a>
+  <a class="fg" href="albums/08-roomservice.html"><span class="fg-num">08</span><img src="images/covers/08-roomservice.jpg" alt=""><div class="fg-label"><span class="lbl-bold">ROOMSERVICE©</span></div></a>
+  <a class="fg" href="albums/09-spfw.html"><span class="fg-num">09</span><img src="images/covers/09-spfw.jpg" alt=""><div class="fg-label"><span class="lbl-bold">SPFW</span><span class="lbl-small">BTS</span></div></a>
+  <a class="fg" href="albums/10-departamento.html"><span class="fg-num">10</span><img src="images/covers/10-departamento.jpg" alt=""><div class="fg-label"><span class="lbl-bold">DEPARTAMENTO</span></div></a>
+  <a class="fg" href="albums/07-bruna-tavares.html"><span class="fg-num">11</span><img src="images/covers/07-bruna-tavares.jpg" alt=""><div class="fg-label"><span class="lbl-bold">BRUNA TAVARES</span><span class="lbl-small">Composite</span></div></a>
+  <a class="fg" href="albums/04-bruno-fagundes.html"><span class="fg-num">12</span><img src="images/covers/04-bruno-fagundes.jpg" alt=""><div class="fg-label"><span class="lbl-bold">BRUNO FAGUNDES</span><span class="lbl-small">GoldenGlobe26</span></div></a>
+  <a class="fg" href="albums/13-marmomac.html"><span class="fg-num">13</span><img src="images/covers/13-marmomac.jpg" alt=""><div class="fg-label"><span class="lbl-bold">MARMOMAC</span><span class="lbl-small">BRASIL</span></div></a>
+  <a class="fg" href="albums/14-kenzo.html"><span class="fg-num">14</span><img src="images/covers/14-kenzo.jpg" alt=""><div class="fg-label"><span class="lbl-bold">KENZO</span><span class="lbl-small">PH</span></div></a>
+  <a class="fg" href="albums/11-menina.html"><span class="fg-num">15</span><img src="images/covers/11-menina.jpg" alt=""><div class="fg-label"><span class="lbl-bold">MENINA VENENO</span><span class="lbl-small">BACKSTAGE</span></div></a>
+  <a class="fg" href="albums/16-provador.html"><span class="fg-num">16</span><img src="images/covers/16-provador.jpg" alt=""><div class="fg-label"><span class="lbl-bold">PROVADOR</span></div></a>
+  <a class="fg" href="albums/17-music.html"><span class="fg-num">17</span><img src="images/covers/17-music.jpg" alt=""><div class="fg-label"><span class="lbl-bold">MUSIC</span></div></a>
+  <a class="fg fg-plus" href="albums/18-plus.html"><span class="fg-num">18</span><img src="images/covers/18-plus.jpg" alt=""><div class="fg-plus-sign">+</div><div class="fg-label"></div></a>
+</div>
+
+<footer class="footer">
+  <p>Luma Benincá Photography © 2025</p>
+  <p>SP ___ RJ ___ ES</p>
+</footer>
+
+</body>
+</html>

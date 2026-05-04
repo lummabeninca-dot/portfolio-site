@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MARMOMAC — Luma Benincá</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:#fff;color:#000;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;overflow-x:hidden;}
+a{text-decoration:none;color:inherit;}
+
+/* NAV */
+.nav{padding:10px 28px;font-size:13px;letter-spacing:0.02em;text-transform:uppercase;display:flex;gap:0;align-items:center;border-bottom:1px solid #e8e8e8;position:sticky;top:0;background:#fff;z-index:100;}
+.nav a{font-weight:900;font-size:13px;text-transform:uppercase;}
+.nav-sep{margin:0 6px;font-weight:900;}
+
+/* HEADER */
+.album-header{
+  padding:48px 28px 28px;
+  border-bottom:1px solid #000;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+}
+.album-num{font-size:11px;font-weight:700;letter-spacing:0.18em;color:#999;}
+.album-title{font-size:clamp(32px,5vw,72px);font-weight:900;letter-spacing:-0.02em;line-height:1;text-transform:uppercase;}
+.album-sub{font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#666;margin-top:6px;}
+.album-count{font-size:11px;font-weight:700;letter-spacing:0.12em;color:#999;text-align:right;}
+
+/* GRID */
+.photo-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  padding:20px 32px;
+}
+@media(max-width:768px){
+  .photo-grid{grid-template-columns:repeat(2,1fr);padding:12px 16px;}
+}
+@media(max-width:480px){
+  .photo-grid{grid-template-columns:1fr;}
+}
+.photo-item{
+  position:relative;
+  overflow:hidden;
+  background:#e4e2de;
+  aspect-ratio:9/16;
+  cursor:default;
+}
+.photo-item img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .7s ease;
+}
+.photo-item:hover img{transform:scale(1.05);}
+.photo-item video{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .7s ease;
+}
+.photo-item:hover video{transform:scale(1.05);}
+.video-badge{
+  position:absolute;bottom:8px;right:8px;
+  background:rgba(0,0,0,0.55);color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:0.1em;
+  padding:2px 6px;border-radius:2px;
+  pointer-events:none;z-index:2;
+}
+
+/* EMPTY STATE */
+.empty{
+  padding:80px 28px;
+  text-align:center;
+  color:#bbb;
+}
+.empty p{font-size:13px;letter-spacing:0.08em;text-transform:uppercase;}
+
+/* LIGHTBOX */
+.lb{
+  position:fixed;inset:0;background:rgba(0,0,0,0.95);
+  z-index:999;display:none;
+  align-items:center;justify-content:center;
+}
+.lb.active{display:flex;}
+.lb-img{max-width:92vw;max-height:92vh;object-fit:contain;display:block;}
+.lb-close{
+  position:fixed;top:20px;right:24px;
+  font-size:28px;color:#fff;cursor:default;
+  font-weight:300;line-height:1;z-index:1001;
+}
+.lb-prev,.lb-next{
+  position:fixed;top:50%;transform:translateY(-50%);
+  font-size:24px;color:#fff;cursor:default;
+  background:none;border:none;padding:20px;
+  font-weight:300;z-index:1001;
+}
+.lb-prev{left:8px;}
+.lb-next{right:8px;}
+
+/* FOOTER */
+.footer{margin-top:80px;padding:18px 28px;border-top:1px solid #e0e0e0;display:flex;justify-content:space-between;align-items:center;}
+.footer p{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#888;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="../index.html">← LUMA BENINCÁ</a>
+  <span class="nav-sep">/</span>
+  <span>MARMOMAC</span>
+</nav>
+
+<div class="album-header">
+  <div>
+    <div class="album-num">(13)</div>
+    <div class="album-title">MARMOMAC</div>
+    <div class="album-sub">BRASIL</div>
+    
+  </div>
+  <div class="album-count" id="photo-count"></div>
+</div>
+
+<div class="photo-grid" id="photo-grid"></div>
+
+<!-- LIGHTBOX -->
+<div class="lb" id="lb">
+  <span class="lb-close" onclick="closeLb()">✕</span>
+  <button class="lb-prev" onclick="lbNav(-1)">&#8592;</button>
+  <div id="lb-media"></div>
+  <button class="lb-next" onclick="lbNav(1)">&#8594;</button>
+</div>
+
+<footer class="footer">
+  <p>Luma Benincá Photography © 2025</p>
+  <p>SP ___ RJ ___ ES</p>
+</footer>
+
+<script>
+// ─────────────────────────────────────────────
+// ADICIONE OS NOMES DAS SUAS FOTOS/VÍDEOS AQUI:
+// Coloque os arquivos na pasta: images/albums/tattoo/
+// Aceita: .jpg e .mp4
+// ─────────────────────────────────────────────
+const photos = [
+  'DSC04904.jpg',
+  'DSC04906.jpg',
+  'DSC04907.jpg',
+  'DSC04910.jpg',
+  'DSC04912.jpg',
+  'DSC04925.jpg',
+  'DSC04943.jpg',
+  'DSC04955.jpg',
+  'DSC04957.jpg',
+  'DSC04960.jpg',
+  'DSC04965.jpg',
+  'DSC04969.jpg',
+  'DSC04983.jpg',
+  'DSC04990.jpg',
+  'DSC05010.jpg',
+  'DSC05018.jpg',
+  'DSC05035.jpg',
+  'DSC05036.jpg',
+  'DSC05037.jpg',
+  'DSC05041.jpg',
+  'DSC05044.jpg',
+  'DSC05045.jpg',
+  'DSC05047.jpg',
+  'DSC05048.jpg',
+  'DSC05050.jpg',
+  'DSC05052.jpg',
+  'DSC05053.jpg',
+  'DSC05056.jpg',
+  'DSC05059.jpg',
+  'DSC05061.jpg',
+  'DSC05063.jpg',
+  'DSC05066.jpg',
+  'DSC05075.jpg',
+  'DSC05078.jpg',
+  'DSC05092.jpg',
+  'DSC05103.jpg',
+  'DSC05107.jpg',
+  'DSC05117.jpg',
+  'DSC05120.jpg',
+  'DSC05130.jpg',
+  'DSC05139.jpg',
+  'DSC05172.jpg',
+  'DSC05174.jpg',
+  'DSC05186.jpg',
+  'DSC05194.jpg',
+  'DSC05199.jpg',
+  'DSC05217.jpg',
+  'DSC05220.jpg',
+  'DSC05246.jpg',
+  'DSC05254.jpg',
+  'DSC05262.jpg',
+  'DSC05265.jpg',
+  'DSC05271.jpg',
+  'DSC05290.jpg',
+  'DSC05304.jpg',
+  'DSC05307.jpg',
+  'DSC05316.jpg',
+  'DSC05320.jpg',
+  'DSC05323.jpg',
+  'DSC05325.jpg',
+  'DSC05329.jpg',
+  'DSC05336.jpg',
+  'DSC05338.jpg',
+  'DSC05343.jpg',
+  'DSC05347.jpg',
+  'DSC05350.jpg',
+  'DSC05375.jpg',
+  'DSC05376.jpg',
+  'DSC05379.jpg',
+  'DSC05381.jpg',
+  'DSC05383.jpg',
+  'DSC05385.jpg',
+  'DSC05391.jpg',
+  'DSC05399.jpg',
+  'DSC05407.jpg',
+  'DSC05409.jpg',
+  'DSC05412.jpg',
+  'DSC05417.jpg',
+  'DSC05431.jpg',
+  'DSC05435.jpg',
+  'DSC05437.jpg',
+  'DSC05447.jpg',
+  'DSC05450.jpg',
+  'DSC05457.jpg',
+  'DSC05460.jpg',
+  'DSC05491.jpg',
+  'DSC05493.jpg',
+  'DSC05495.jpg',
+  'DSC05497.jpg',
+  'DSC05498.jpg',
+  'DSC05501.jpg',
+  'DSC05504.jpg',
+  'DSC05507.jpg',
+  'DSC05508.jpg',
+  'DSC05509.jpg',
+  'DSC05511.jpg',
+  'DSC05514.jpg',
+  'DSC05516.jpg',
+  'DSC05521.jpg',
+  'DSC05522.jpg',
+  'DSC05523.jpg',
+  'DSC05527.jpg',
+  'DSC05528.jpg',
+  'DSC05529.jpg',
+  'DSC05531.jpg',
+  'DSC05532.jpg',
+  'DSC05534.jpg',
+  'DSC05535.jpg',
+  'DSC05536.jpg',
+  'DSC05537.jpg',
+  'DSC05540.jpg',
+  'DSC05543.jpg',
+  'DSC05545.jpg',
+  'DSC05546.jpg',
+  'DSC05547.jpg',
+  'DSC05548.jpg',
+  'DSC05550.jpg',
+  'DSC05552.jpg',
+  'DSC05554.jpg',
+  'DSC05557.jpg',
+  'DSC05564.jpg',
+  'DSC05567.jpg',
+  'DSC05569.jpg',
+  'DSC05570.jpg',
+  'DSC05572.jpg',
+  'DSC05573.jpg',
+  'DSC05575.jpg',
+  'DSC05579.jpg',
+  'DSC05581.jpg',
+  'DSC05583.jpg',
+  'DSC05586.jpg',
+  'DSC05587.jpg',
+  'DSC05589.jpg',
+  'DSC05598.jpg',
+  'DSC05602.jpg',
+  'DSC05611.jpg',
+  'DSC05613.jpg',
+  'DSC05615.jpg',
+  'DSC05617.jpg',
+  'DSC05619.jpg',
+  'DSC05622.jpg',
+  'DSC05623.jpg',
+  'DSC05624.jpg',
+  'DSC05628.jpg',
+  'DSC05633.jpg',
+  'DSC05635.jpg',
+  'DSC05644.jpg',
+  'DSC05645.jpg',
+  'DSC05649.jpg',
+  'DSC05650.jpg',
+  'DSC05652.jpg',
+  'DSC05653.jpg',
+  'DSC05654.jpg',
+  'DSC05657.jpg',
+  'DSC05660.jpg',
+  'DSC05661.jpg',
+  'DSC05665.jpg',
+  'DSC05668.jpg',
+  'DSC05670.jpg',
+  'DSC05671.jpg',
+  'DSC05674.jpg',
+  'DSC05675.jpg',
+  'DSC05677.jpg',
+  'DSC05687.jpg',
+  'DSC05688.jpg',
+  'DSC06004.jpg',
+  'DSC06009.jpg',
+];
+// ─────────────────────────────────────────────
+
+const BASE = '../images/albums/marmomac/';
+const grid = document.getElementById('photo-grid');
+const countEl = document.getElementById('photo-count');
+
+function isVideo(name){ const n=name.toLowerCase(); return n.endsWith('.mp4')||n.endsWith('.mov'); }
+
+if (photos.length === 0) {
+  grid.innerHTML = '<div class="empty"><p>Em breve</p></div>';
+  grid.style.display = 'block';
+} else {
+  countEl.textContent = photos.length + (photos.length === 1 ? ' arquivo' : ' arquivos');
+  photos.forEach((name, i) => {
+    const item = document.createElement('div');
+    item.className = 'photo-item';
+    if (isVideo(name)) {
+      const preview = BASE + 'preview/' + name;
+      item.innerHTML = `<video src="${preview}" muted loop playsinline preload="metadata"></video><span class="video-badge">▶</span>`;
+    } else {
+      item.innerHTML = `<img src="${BASE}${name}" alt="" loading="lazy">`;
+    }
+    item.onclick = () => openLb(i);
+    grid.appendChild(item);
+  });
+}
+
+
+// Hover preview em vídeos
+grid.addEventListener('mouseover', e => {
+  const item = e.target.closest('.photo-item');
+  if (!item) return;
+  const v = item.querySelector('video');
+  if (v && v.paused) v.play();
+});
+grid.addEventListener('mouseout', e => {
+  const item = e.target.closest('.photo-item');
+  if (!item) return;
+  const v = item.querySelector('video');
+  if (v && !v.paused) { v.pause(); v.currentTime = 0; }
+});
+// Lightbox
+let current = 0;
+function openLb(i) {
+  current = i;
+  showLbItem(i);
+  document.getElementById('lb').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function showLbItem(i) {
+  const lb = document.getElementById('lb-media');
+  const name = photos[i];
+  if (isVideo(name)) {
+    lb.innerHTML = `<video src="${BASE}${name}" controls autoplay style="max-width:92vw;max-height:92vh;display:block;"></video>`;
+  } else {
+    lb.innerHTML = `<img src="${BASE}${name}" alt="" style="max-width:92vw;max-height:92vh;object-fit:contain;display:block;">`;
+  }
+}
+function closeLb() {
+  document.getElementById('lb').classList.remove('active');
+  document.getElementById('lb-media').innerHTML = '';
+  document.body.style.overflow = '';
+}
+function lbNav(dir) {
+  current = (current + dir + photos.length) % photos.length;
+  showLbItem(current);
+}
+document.getElementById('lb').addEventListener('click', function(e) {
+  if (e.target === this) closeLb();
+});
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lb').classList.contains('active')) return;
+  if (e.key === 'Escape') closeLb();
+  if (e.key === 'ArrowLeft') lbNav(-1);
+  if (e.key === 'ArrowRight') lbNav(1);
+});
+</script>
+</body>
+</html>

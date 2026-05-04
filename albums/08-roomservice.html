@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROOMSERVICE© — Luma Benincá</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:#fff;color:#000;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;overflow-x:hidden;}
+a{text-decoration:none;color:inherit;}
+
+/* NAV */
+.nav{padding:10px 28px;font-size:13px;letter-spacing:0.02em;text-transform:uppercase;display:flex;gap:0;align-items:center;border-bottom:1px solid #e8e8e8;position:sticky;top:0;background:#fff;z-index:100;}
+.nav a{font-weight:900;font-size:13px;text-transform:uppercase;}
+.nav-sep{margin:0 6px;font-weight:900;}
+
+/* HEADER */
+.album-header{
+  padding:48px 28px 28px;
+  border-bottom:1px solid #000;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+}
+.album-num{font-size:11px;font-weight:700;letter-spacing:0.18em;color:#999;}
+.album-title{font-size:clamp(32px,5vw,72px);font-weight:900;letter-spacing:-0.02em;line-height:1;text-transform:uppercase;}
+.album-sub{font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#666;margin-top:6px;}
+.album-count{font-size:11px;font-weight:700;letter-spacing:0.12em;color:#999;text-align:right;}
+
+/* GRID */
+.photo-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  padding:20px 32px;
+}
+@media(max-width:768px){
+  .photo-grid{grid-template-columns:repeat(2,1fr);padding:12px 16px;}
+}
+@media(max-width:480px){
+  .photo-grid{grid-template-columns:1fr;}
+}
+.photo-item{
+  position:relative;
+  overflow:hidden;
+  background:#e4e2de;
+  aspect-ratio:9/16;
+  cursor:default;
+}
+.photo-item img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .7s ease;
+}
+.photo-item:hover img{transform:scale(1.05);}
+.photo-item video{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .7s ease;
+}
+.photo-item:hover video{transform:scale(1.05);}
+.video-badge{
+  position:absolute;bottom:8px;right:8px;
+  background:rgba(0,0,0,0.55);color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:0.1em;
+  padding:2px 6px;border-radius:2px;
+  pointer-events:none;z-index:2;
+}
+
+/* EMPTY STATE */
+.empty{
+  padding:80px 28px;
+  text-align:center;
+  color:#bbb;
+}
+.empty p{font-size:13px;letter-spacing:0.08em;text-transform:uppercase;}
+
+/* LIGHTBOX */
+.lb{
+  position:fixed;inset:0;background:rgba(0,0,0,0.95);
+  z-index:999;display:none;
+  align-items:center;justify-content:center;
+}
+.lb.active{display:flex;}
+.lb-img{max-width:92vw;max-height:92vh;object-fit:contain;display:block;}
+.lb-close{
+  position:fixed;top:20px;right:24px;
+  font-size:28px;color:#fff;cursor:default;
+  font-weight:300;line-height:1;z-index:1001;
+}
+.lb-prev,.lb-next{
+  position:fixed;top:50%;transform:translateY(-50%);
+  font-size:24px;color:#fff;cursor:default;
+  background:none;border:none;padding:20px;
+  font-weight:300;z-index:1001;
+}
+.lb-prev{left:8px;}
+.lb-next{right:8px;}
+
+/* FOOTER */
+.footer{margin-top:80px;padding:18px 28px;border-top:1px solid #e0e0e0;display:flex;justify-content:space-between;align-items:center;}
+.footer p{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#888;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="../index.html">← LUMA BENINCÁ</a>
+  <span class="nav-sep">/</span>
+  <span>ROOMSERVICE©</span>
+</nav>
+
+<div class="album-header">
+  <div>
+    <div class="album-num">(08)</div>
+    <div class="album-title">ROOMSERVICE©</div>
+    
+  </div>
+  <div class="album-count" id="photo-count"></div>
+</div>
+
+<div class="photo-grid" id="photo-grid"></div>
+
+<!-- LIGHTBOX -->
+<div class="lb" id="lb">
+  <span class="lb-close" onclick="closeLb()">✕</span>
+  <button class="lb-prev" onclick="lbNav(-1)">&#8592;</button>
+  <div id="lb-media"></div>
+  <button class="lb-next" onclick="lbNav(1)">&#8594;</button>
+</div>
+
+<footer class="footer">
+  <p>Luma Benincá Photography © 2025</p>
+  <p>SP ___ RJ ___ ES</p>
+</footer>
+
+<script>
+// ─────────────────────────────────────────────
+// ADICIONE OS NOMES DAS SUAS FOTOS/VÍDEOS AQUI:
+// Coloque os arquivos na pasta: images/albums/ac/
+// Aceita: .jpg e .mp4
+// ─────────────────────────────────────────────
+const photos = [
+  'DSC00064.jpg',
+  'DSC00069 2.jpg',
+  'DSC00069.jpg',
+  'DSC00089 2.jpg',
+  'DSC00089.jpg',
+  'DSC00122 2.jpg',
+  'DSC00122.jpg',
+  'DSC00132 2.jpg',
+  'DSC00132.jpg',
+  'DSC00139 2.jpg',
+  'DSC00139.jpg',
+  'DSC00184 2.jpg',
+  'DSC00184.jpg',
+  'DSC00256 2.jpg',
+  'DSC00256.jpg',
+  'DSC00261 2.jpg',
+  'DSC00261.jpg',
+  'DSC00281 2.jpg',
+  'DSC00281.jpg',
+  'DSC00295.jpg',
+  'DSC00304 2.jpg',
+  'DSC00304.jpg',
+  'DSC00324 2.jpg',
+  'DSC00324.jpg',
+  'DSC00339 2.jpg',
+  'DSC00339.jpg',
+  'DSC00392 2.jpg',
+  'DSC00392.jpg',
+  'DSC00416.jpg',
+  'DSC00419.jpg',
+  'DSC00446 2.jpg',
+  'DSC00446.jpg',
+  'DSC00454.jpg',
+  'DSC00474.jpg',
+  'DSC00479.jpg',
+  'DSC00480.jpg',
+  'DSC00485.jpg',
+  'DSC00499 2.jpg',
+  'DSC00499.jpg',
+  'DSC00502 2.jpg',
+  'DSC00502.jpg',
+  'DSC00509 2.jpg',
+  'DSC00509.jpg',
+  'DSC00517.jpg',
+  'DSC00531.jpg',
+  'DSC00542.jpg',
+  'DSC00548 2.jpg',
+  'DSC00548.jpg',
+  'DSC00549.jpg',
+  'DSC00560.jpg',
+  'DSC00563.jpg',
+  'DSC00568 2.jpg',
+  'DSC00568 3.jpg',
+  'DSC00568 4.jpg',
+  'DSC00568.jpg',
+  'DSC00574.jpg',
+  'DSC00577 2.jpg',
+  'DSC00577.jpg',
+  'DSC00611 2.jpg',
+  'DSC00611.jpg',
+  'DSC00636 4.JPG',
+  'DSC00636 5.JPG',
+  'DSC00659 2.jpg',
+  'DSC00659.jpg',
+  'DSC00668 2.JPG',
+  'DSC00668.JPG',
+  'DSC00698 2.jpg',
+  'DSC00698.jpg',
+  'DSC00700 2.jpg',
+  'DSC00700.jpg',
+  'DSC00707 3.JPG',
+  'DSC00707 4.JPG',
+  'DSC00722 2.JPG',
+  'DSC00722.JPG',
+  'DSC00813 2.jpg',
+  'DSC00813.jpg',
+  'DSC00815 2.jpg',
+  'DSC00815.jpg',
+  'DSC00819 2.jpg',
+  'DSC00819.jpg',
+  'DSC00827 2.jpg',
+  'DSC00827.jpg',
+  'DSC00836 2.jpg',
+  'DSC00836.jpg',
+  'DSC00837 2.jpg',
+  'DSC00837.jpg',
+  'DSC00847 2.jpg',
+  'DSC00847.jpg',
+  'DSC00865 2.jpg',
+  'DSC00865.jpg',
+  'DSC00890 2.jpg',
+  'DSC00890.jpg',
+  'DSC00892 2.jpg',
+  'DSC00892.jpg',
+  'DSC00910 2.jpg',
+  'DSC00910.jpg',
+  'DSC00945 2.jpg',
+  'DSC00945.jpg',
+  'DSC00951.jpg',
+  'DSC01138 2.jpg',
+  'DSC01138.jpg',
+  'DSC01158 2.jpg',
+  'DSC01158.jpg',
+  'DSC01163.jpg',
+  'DSC01164 2.jpg',
+  'DSC01164.jpg',
+  'DSC01184 2.jpg',
+  'DSC01184.jpg',
+  'DSC01204 2.jpg',
+  'DSC01204.jpg',
+  'DSC01214 2.jpg',
+  'DSC01214.jpg',
+  'DSC01222 2.jpg',
+  'DSC01222.jpg',
+  'DSC01236 2.jpg',
+  'DSC01236.jpg',
+  'DSC01262 2.jpg',
+  'DSC01262.jpg',
+  'DSC01279 2.jpg',
+  'DSC01279.jpg',
+  'DSC01322 2.jpg',
+  'DSC01322.jpg',
+  'DSC01336 2.jpg',
+  'DSC01336.jpg',
+  'DSC01350 2.jpg',
+  'DSC01350.jpg',
+  'DSC01408 2.jpg',
+  'DSC01408.jpg',
+  'DSC01509 2.jpg',
+  'DSC01509.jpg',
+  'DSC01511_Afterlight.jpg',
+  'DSC01520.jpg',
+  'DSC01535 2.jpg',
+  'DSC01535.jpg',
+  'DSC01574 2.jpg',
+  'DSC01574.jpg',
+  'DSC01579 2.jpg',
+  'DSC01579.jpg',
+  'DSC01587 2.jpg',
+  'DSC01587.jpg',
+  'DSC01590 2.jpg',
+  'DSC01590(1) 2.jpg',
+  'DSC01590(1).jpg',
+  'DSC01590.jpg',
+  'DSC01636 2.jpg',
+  'DSC01636.jpg',
+  'DSC01642 2.jpg',
+  'DSC01642.jpg',
+  'DSC01647 2.jpg',
+  'DSC01647.jpg',
+  'DSC01652_Afterlight 2.jpg',
+  'DSC01652_Afterlight.jpg',
+  'DSC01699 2.jpg',
+  'DSC01699.jpg',
+  'DSC01708.jpg',
+  'DSC01751 2.jpg',
+  'DSC01751.jpg',
+  'DSC01763 2.jpg',
+  'DSC01763.jpg',
+  'DSC01777 2.jpg',
+  'DSC01777.jpg',
+  'DSC03688.JPG',
+  'DSC03707 2.JPG',
+  'DSC03707.JPG',
+  'DSC03717 2.JPG',
+  'DSC03717.JPG',
+  'DSC03750.JPG',
+  'DSC03776 2.jpg',
+  'DSC03776.jpg',
+  'DSC03779.JPG',
+  'DSC03784_Afterlight 2.JPG',
+  'DSC03784_Afterlight.JPG',
+  'DSC03849 2.JPG',
+  'DSC03849.JPG',
+  'DSC03863.JPG',
+  'DSC03877.JPG',
+  'DSC04058 2.JPG',
+  'DSC04079.JPG',
+  'DSC04110 2.JPG',
+  'DSC04110.JPG',
+  'DSC04212 2.JPG',
+  'DSC04212.JPG',
+  'DSC04222.jpg',
+  'DSC04231 2.JPG',
+  'DSC04231.JPG',
+  'DSC04238.JPG',
+  'DSC04247 2.JPG',
+  'DSC04247.JPG',
+  'DSC04248.JPG',
+  'DSC04337 2.JPG',
+  'DSC04337.JPG',
+  'DSC04368 2.JPG',
+  'DSC04368.JPG',
+  'DSC04460 2.JPG',
+  'DSC04460.JPG',
+  'DSC04520 2.JPG',
+  'DSC04520.JPG',
+  'DSC04542.JPG',
+  'DSC04551 2.JPG',
+  'DSC04551.JPG',
+  'DSC04566 2.JPG',
+  'DSC04566.JPG',
+  'DSC04577.JPG',
+  'DSC04639 2.JPG',
+  'DSC04639.JPG',
+  'DSC04651.JPG',
+  'DSC04657.JPG',
+  'DSC04661.JPG',
+  'DSC04665.JPG',
+  'DSC04681.JPG',
+  'DSC04683 2.JPG',
+  'DSC04683.JPG',
+  'DSC04690 2.JPG',
+  'DSC04690.JPG',
+  'DSC04705.JPG',
+  'DSC04717.jpg',
+  'DSC04724.JPG',
+  'DSC04730.JPG',
+  'DSC04738.JPG',
+  'DSC04743.JPG',
+  'DSC04747.JPG',
+  'DSC04758 2.JPG',
+  'DSC04758.JPG',
+  'DSC04771.JPG',
+  'DSC04810.JPG',
+  'DSC04841 2.JPG',
+  'DSC04841.JPG',
+  'DSC04861 2.JPG',
+  'DSC04861.JPG',
+  'DSC04870 2.JPG',
+  'DSC04870 3.JPG',
+  'DSC04875.JPG',
+  'DSC04877 2.JPG',
+  'DSC05036 2.JPG',
+  'DSC05036.JPG',
+  'DSC05045.JPG',
+  'DSC05052.JPG',
+  'DSC05073 2.JPG',
+  'DSC05073.JPG',
+  'DSC05240 2.jpg',
+  'DSC05240.jpg',
+  'DSC05303 2.jpg',
+  'DSC05303.jpg',
+  'DSC05338 2.JPG',
+  'DSC05338.JPG',
+  'DSC05344 2.JPG',
+  'DSC05344.JPG',
+  'DSC05383 2.JPG',
+  'DSC05383.JPG',
+  'DSC05391 2.jpg',
+  'DSC05391.jpg',
+  'DSC05393.JPG',
+  'DSC05482 2.jpg',
+  'DSC05482.jpg',
+  'DSC05506_Afterlight 2.JPG',
+  'DSC05506_Afterlight.JPG',
+  'DSC05588 2.jpg',
+  'DSC05588.jpg',
+  'DSC09129.jpg',
+  'DSC09140 2.jpg',
+  'DSC09140.jpg',
+  'DSC09141.jpg',
+  'DSC09150.jpg',
+  'DSC09170 2.jpg',
+  'DSC09170.jpg',
+  'DSC09177.jpg',
+  'DSC09188.jpg',
+  'DSC09203.jpg',
+  'DSC09206.jpg',
+  'DSC09210.jpg',
+  'DSC09228 2.jpg',
+  'DSC09228.jpg',
+  'DSC09234 2.jpg',
+  'DSC09234.jpg',
+  'DSC09250.jpg',
+  'DSC09273.jpg',
+  'DSC09290 2.jpg',
+  'DSC09290.jpg',
+  'DSC09307(1).jpg',
+  'DSC09307.jpg',
+  'DSC09318 2.jpg',
+  'DSC09318.jpg',
+  'DSC09322(1).jpg',
+  'DSC09322.jpg',
+  'DSC09333.jpg',
+  'DSC09360.jpg',
+  'DSC09376.jpg',
+  'DSC09377.jpg',
+  'DSC09400.jpg',
+  'DSC09405.jpg',
+  'DSC09409.jpg',
+  'DSC09411.jpg',
+  'DSC09413 2.jpg',
+  'DSC09413.jpg',
+  'DSC09421.jpg',
+  'DSC09424.jpg',
+  'DSC09425.jpg',
+  'DSC09427.jpg',
+  'DSC09448.jpg',
+  'DSC09457.jpg',
+  'DSC09466 2.jpg',
+  'DSC09466.jpg',
+  'DSC09519 2.jpg',
+  'DSC09519.jpg',
+  'DSC09519_Afterlight 2.JPG',
+  'DSC09519_Afterlight.JPG',
+  'DSC09533 2.jpg',
+  'DSC09533.jpg',
+  'DSC09538.jpg',
+  'DSC09553 2.jpg',
+  'DSC09553.jpg',
+  'DSC09566 2.jpg',
+  'DSC09566.jpg',
+  'DSC09606 2.jpg',
+  'DSC09606.jpg',
+  'DSC09617.jpg',
+  'DSC09639 2.jpg',
+  'DSC09639.jpg',
+  'DSC09642 2.jpg',
+  'DSC09642.jpg',
+  'DSC09646.jpg',
+  'DSC09686.jpg',
+  'DSC09707 2.jpg',
+  'DSC09707.jpg',
+  'DSC09709 2.jpg',
+  'DSC09709.jpg',
+  'DSC09716_Afterlight 2.jpg',
+  'DSC09716_Afterlight.jpg',
+  'DSC09721 2.jpg',
+  'DSC09721.jpg',
+  'DSC09731 2.jpg',
+  'DSC09731.jpg',
+  'DSC09747 2.jpg',
+  'DSC09747.jpg',
+  'DSC09749.jpg',
+  'DSC09753.jpg',
+  'DSC09761.jpg',
+  'DSC09766.jpg',
+  'DSC09768 2.jpg',
+  'DSC09768.jpg',
+  'DSC09769.jpg',
+  'DSC09775.jpg',
+  'DSC09796.jpg',
+  'DSC09797 2.jpg',
+  'DSC09797.jpg',
+  'DSC09812.jpg',
+  'DSC09814.jpg',
+  'DSC09828 2.jpg',
+  'DSC09828.jpg',
+  'DSC09834.jpg',
+  'DSC09842.jpg',
+  'DSC09861.jpg',
+  'DSC09864.jpg',
+  'DSC09867.jpg',
+  'DSC09868.jpg',
+  'DSC09870.jpg',
+  'DSC09873.jpg',
+  'DSC09881.jpg',
+  'DSC09883.jpg',
+  'DSC09884.jpg',
+  'DSC09889.jpg',
+  'DSC09903.jpg',
+  'DSC09908.jpg',
+  'DSC09918.jpg',
+  'DSC09930.jpg',
+  'DSC09933 2.jpg',
+  'DSC09933.jpg',
+  'DSC09939.jpg',
+  'DSC09943.jpg',
+  'DSC09949 2.jpg',
+  'DSC09949.jpg',
+  'DSC09976-Edit.jpg',
+  'DSC09987.jpg',
+  'DSC09997 2.jpg',
+  'DSC09997.jpg',
+  'DSC09998 2.jpg',
+  'DSC09998.jpg',
+  'IMG_9725 2.jpg',
+  'IMG_9725 3.jpg',
+];
+// ─────────────────────────────────────────────
+
+const BASE = '../images/albums/roomservice/';
+const grid = document.getElementById('photo-grid');
+const countEl = document.getElementById('photo-count');
+
+function isVideo(name){ const n=name.toLowerCase(); return n.endsWith('.mp4')||n.endsWith('.mov'); }
+
+if (photos.length === 0) {
+  grid.innerHTML = '<div class="empty"><p>Em breve</p></div>';
+  grid.style.display = 'block';
+} else {
+  countEl.textContent = photos.length + (photos.length === 1 ? ' arquivo' : ' arquivos');
+  photos.forEach((name, i) => {
+    const item = document.createElement('div');
+    item.className = 'photo-item';
+    if (isVideo(name)) {
+      const preview = BASE + 'preview/' + name;
+      item.innerHTML = `<video src="${preview}" muted loop playsinline preload="metadata"></video><span class="video-badge">▶</span>`;
+    } else {
+      item.innerHTML = `<img src="${BASE}${name}" alt="" loading="lazy">`;
+    }
+    item.onclick = () => openLb(i);
+    grid.appendChild(item);
+  });
+}
+
+
+// Hover preview em vídeos
+grid.addEventListener('mouseover', e => {
+  const item = e.target.closest('.photo-item');
+  if (!item) return;
+  const v = item.querySelector('video');
+  if (v && v.paused) v.play();
+});
+grid.addEventListener('mouseout', e => {
+  const item = e.target.closest('.photo-item');
+  if (!item) return;
+  const v = item.querySelector('video');
+  if (v && !v.paused) { v.pause(); v.currentTime = 0; }
+});
+// Lightbox
+let current = 0;
+function openLb(i) {
+  current = i;
+  showLbItem(i);
+  document.getElementById('lb').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function showLbItem(i) {
+  const lb = document.getElementById('lb-media');
+  const name = photos[i];
+  if (isVideo(name)) {
+    lb.innerHTML = `<video src="${BASE}${name}" controls autoplay style="max-width:92vw;max-height:92vh;display:block;"></video>`;
+  } else {
+    lb.innerHTML = `<img src="${BASE}${name}" alt="" style="max-width:92vw;max-height:92vh;object-fit:contain;display:block;">`;
+  }
+}
+function closeLb() {
+  document.getElementById('lb').classList.remove('active');
+  document.getElementById('lb-media').innerHTML = '';
+  document.body.style.overflow = '';
+}
+function lbNav(dir) {
+  current = (current + dir + photos.length) % photos.length;
+  showLbItem(current);
+}
+document.getElementById('lb').addEventListener('click', function(e) {
+  if (e.target === this) closeLb();
+});
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lb').classList.contains('active')) return;
+  if (e.key === 'Escape') closeLb();
+  if (e.key === 'ArrowLeft') lbNav(-1);
+  if (e.key === 'ArrowRight') lbNav(1);
+});
+</script>
+</body>
+</html>

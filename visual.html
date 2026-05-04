@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visual — Luma Benincá</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:#fff;color:#000;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;overflow-x:hidden;}
+a{text-decoration:none;color:inherit;}
+
+/* NAV */
+.nav{
+  padding:6px 16px;
+  font-size:11px;letter-spacing:0.02em;text-transform:uppercase;
+  display:flex;align-items:center;
+  border-bottom:1px solid #e8e8e8;
+  position:sticky;top:0;background:#fff;z-index:100;
+  height:32px;
+}
+.nav a{font-weight:900;font-size:13px;text-transform:uppercase;}
+
+/* WALL GRID */
+html,body{height:100%;overflow:hidden;}
+.masonry{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:8px;
+  padding:8px;
+}
+.masonry-item{
+  border-radius:10px;
+  overflow:hidden;
+  background:#e4e2de;
+  cursor:default;
+  aspect-ratio:4/3;
+}
+.masonry-item img{
+  width:100%;height:100%;
+  object-fit:cover;
+  display:block;
+  transition:transform .6s ease;
+}
+.masonry-item:hover img{transform:scale(1.04);}
+
+/* Itens menores */
+.masonry-item:nth-child(4){
+  transform:scale(0.88);
+  transform-origin:center;
+}
+.masonry-item:nth-child(8){
+  transform:scale(0.5);
+  transform-origin:center;
+}
+.masonry-item:nth-child(6){
+  transform:scale(0.65);
+  transform-origin:center;
+}
+
+/* FOOTER */
+.footer{margin-top:40px;padding:18px 28px;border-top:1px solid #e0e0e0;display:flex;justify-content:space-between;align-items:center;}
+.footer p{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#888;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html">←</a>
+</nav>
+
+<div class="masonry" id="masonry"></div>
+
+<footer class="footer">
+  <p>Luma Benincá Photography © 2025</p>
+  <p>SP ___ RJ ___ ES</p>
+</footer>
+
+<script>
+const photos = [
+  'visual-01.jpg',
+  'visual-02.png',
+  'visual-03.jpg',
+  'visual-04.jpg',
+  'visual-05.jpg',
+  'visual-06.jpg',
+  'visual-07.jpg',
+  'visual-08.jpg',
+  'visual-09.jpg',
+  'visual-10.png',
+];
+
+const BASE = 'images/visual/';
+const grid = document.getElementById('masonry');
+
+photos.forEach((name) => {
+  const item = document.createElement('div');
+  item.className = 'masonry-item';
+  item.innerHTML = `<img src="${BASE}${name}" alt="" loading="lazy">`;
+  grid.appendChild(item);
+});
+</script>
+</body>
+</html>
