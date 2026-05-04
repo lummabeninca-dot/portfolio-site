@@ -57,13 +57,26 @@ a{text-decoration:none;color:inherit;}
   transition:transform .7s ease;
 }
 .photo-item:hover video{transform:scale(1.05);}
-.video-badge{
-  position:absolute;bottom:8px;right:8px;
-  background:rgba(0,0,0,0.55);color:#fff;
-  font-size:10px;font-weight:700;letter-spacing:0.1em;
-  padding:2px 6px;border-radius:2px;
+.video-badge{display:none;}
+.video-play{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:54px;height:54px;
+  background:rgba(255,255,255,0.22);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
   pointer-events:none;z-index:2;
+  transition:opacity .25s ease;
+  backdrop-filter:blur(3px);
 }
+.video-play::after{
+  content:'';
+  border-left:20px solid rgba(255,255,255,0.9);
+  border-top:12px solid transparent;
+  border-bottom:12px solid transparent;
+  margin-left:5px;
+}
+.photo-item:hover .video-play{opacity:0;}
 
 /* EMPTY STATE */
 .empty{
@@ -174,7 +187,8 @@ if (photos.length === 0) {
     item.className = 'photo-item';
     if (isVideo(name)) {
       const preview = BASE + 'preview/' + name;
-      item.innerHTML = `<video src="${preview}" muted loop playsinline preload="metadata"></video><span class="video-badge">▶</span>`;
+      const posterName = name.replace(/\.[^.]+$/, '.jpg');
+      item.innerHTML = `<video src="${preview}" poster="${BASE}preview/${posterName}" muted loop playsinline preload="none"></video><div class="video-play"></div>`;
     } else {
       item.innerHTML = `<img src="${BASE}${name}" alt="" loading="lazy">`;
     }
