@@ -524,7 +524,7 @@ html{scroll-behavior:smooth;}
   </a>
 
   <!-- 02 — split top/bottom -->
-  <a class="quad" href="portfolio.html">
+  <a class="quad" href="#work" onclick="event.preventDefault();document.getElementById('work').scrollIntoView({behavior:'smooth'})">
     <img src="images/quads/quad-02.jpg" alt="">
     <div class="quad-num">02</div>
     <div class="quad-overlay"></div>
@@ -560,7 +560,7 @@ html{scroll-behavior:smooth;}
 </div>
 
 <!-- ── FULL GRID 18 ── -->
-<div class="full-grid" style="margin-top:2px;">
+<div class="full-grid" id="work" style="margin-top:2px;">
   <a class="fg" href="albums/01-mitta.html"><span class="fg-num">01</span><img src="images/covers/01-mitta.jpg" alt=""><div class="fg-label"><span class="lbl-bold">MITTA</span></div></a>
   <a class="fg" href="albums/02-nowdays.html"><span class="fg-num">02</span><img src="images/covers/02-nowdays.jpg" alt=""><div class="fg-label"><span class="lbl-bold">Nowdays</span><span class="lbl-small">talks</span></div></a>
   <a class="fg" href="albums/03-boma.html"><span class="fg-num">03</span><img src="images/covers/03-boma.jpg" alt=""><div class="fg-label"><span class="lbl-bold">BOMA©</span></div></a>
