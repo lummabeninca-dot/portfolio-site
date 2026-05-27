@@ -99,7 +99,7 @@ a{text-decoration:none;color:inherit;}
   position:absolute;inset:0;z-index:3;
   display:flex;flex-direction:column;justify-content:center;
   padding:20px 16px;
-  opacity:0;transform:translateY(6px);
+  opacity:1;transform:translateY(0);
   transition:opacity .3s ease,transform .3s ease;
 }
 .quad-label-num{font-size:8px;font-weight:800;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:4px;}
@@ -109,7 +109,6 @@ a{text-decoration:none;color:inherit;}
 .quad:hover .quad-overlay{background:rgba(0,0,0,.44);}
 .quad:hover img,.quad:hover .split-top img,.quad:hover .split-bot img,
 .quad:hover .quad-04-top img,.quad:hover .quad-04-bot img{transform:scale(1.05);}
-.quad:hover .quad-label{opacity:1;transform:translateY(0);}
 .quad:hover .quad-arrow{color:rgba(255,255,255,.9);transform:translate(3px,-3px);}
 
 .fg-plus-sign{
