@@ -35,11 +35,10 @@ a{text-decoration:none;color:inherit;}
   padding:20px 32px;
 }
 @media(max-width:768px){
-  .photo-grid{grid-template-columns:repeat(2,1fr);padding:12px 16px;}
+  .photo-grid{grid-template-columns:repeat(3,1fr);gap:2px;padding:0;}
+  .photo-item{aspect-ratio:1/1;}
 }
-@media(max-width:480px){
-  .photo-grid{grid-template-columns:1fr;}
-}
+
 .photo-item{
   position:relative;
   overflow:hidden;
