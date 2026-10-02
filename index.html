@@ -494,9 +494,10 @@ html{scroll-behavior:smooth;}
 }
 @keyframes mq2{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
 
-/* No celular não existe hover: os nomes dos álbuns ficam sempre visíveis,
-   e o véu escuro passa a ser resposta ao toque. */
-@media(max-width:768px){
+/* Em aparelho sem mouse não existe hover: os nomes ficam sempre visíveis
+   e o véu escuro responde ao toque. Largura não serve como critério — uma
+   janela estreita no desktop ainda tem mouse. */
+@media (hover:none) and (pointer:coarse){
   .fg-label{
     opacity:1;
     background:transparent;

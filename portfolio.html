@@ -28,6 +28,11 @@ a{text-decoration:none;color:inherit;}
 }
 @media(max-width:768px){
   .full-grid{grid-template-columns:repeat(3,1fr);}
+  .lbl-bold{font-size:8px;letter-spacing:0.04em;}
+  .lbl-small{font-size:6px;}
+  .fg-num{font-size:8px;}
+}
+@media (hover:none) and (pointer:coarse){
   .fg-label{
     opacity:1;
     background:transparent;
@@ -37,9 +42,6 @@ a{text-decoration:none;color:inherit;}
     background:rgba(0,0,0,0.45);
     text-shadow:none;
   }
-  .lbl-bold{font-size:8px;letter-spacing:0.04em;}
-  .lbl-small{font-size:6px;}
-  .fg-num{font-size:8px;}
 }
 
 .fg{overflow:hidden;cursor:default;background:#e4e2de;position:relative;display:block;}
