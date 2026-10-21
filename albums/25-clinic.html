@@ -30,9 +30,12 @@ a{text-decoration:none;color:inherit;}
 /* GRID */
 .photo-grid{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
+  grid-template-columns:repeat(6,1fr);
+  gap:8px;
   padding:20px 32px;
+}
+@media(max-width:1200px){
+  .photo-grid{grid-template-columns:repeat(4,1fr);}
 }
 @media(max-width:768px){
   .photo-grid{grid-template-columns:repeat(3,1fr);gap:2px;padding:0;}
@@ -151,25 +154,15 @@ photos.forEach((name, i) => {
   item.className = 'photo-item';
   if (isVideo(name)) {
     const posterName = name.replace(/\.[^.]+$/, '.jpg');
-    item.innerHTML = `<video src="${BASE}${name}" poster="${BASE}preview/${posterName}" muted loop playsinline preload="none"></video><div class="video-play"></div>`;
+    item.innerHTML = `<video src="${BASE}${name}" poster="${BASE}preview/${posterName}" muted loop playsinline preload="metadata"></video><div class="video-play"></div>`;
+      const v = item.querySelector('video');
+      item.addEventListener('mouseenter', () => { v.play().catch(() => {}); });
+      item.addEventListener('mouseleave', () => { v.pause(); v.currentTime = 0; });
   } else {
     item.innerHTML = `<img src="${BASE}${name}" alt="" loading="lazy">`;
   }
   item.onclick = () => openLb(i);
   grid.appendChild(item);
-});
-
-grid.addEventListener('mouseover', e => {
-  const item = e.target.closest('.photo-item');
-  if (!item) return;
-  const v = item.querySelector('video');
-  if (v && v.paused) v.play();
-});
-grid.addEventListener('mouseout', e => {
-  const item = e.target.closest('.photo-item');
-  if (!item) return;
-  const v = item.querySelector('video');
-  if (v && !v.paused) { v.pause(); v.currentTime = 0; }
 });
 
 let current = 0;

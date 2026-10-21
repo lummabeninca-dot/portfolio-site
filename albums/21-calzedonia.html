@@ -19,8 +19,19 @@ a{text-decoration:none;color:inherit;}
 .album-sub{font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#666;margin-top:6px;}
 .album-count{font-size:11px;font-weight:700;letter-spacing:0.12em;color:#999;text-align:right;}
 
-.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:20px 32px;}
-@media(max-width:768px){.photo-grid{grid-template-columns:repeat(3,1fr);gap:2px;padding:0;}.photo-item{aspect-ratio:1/1;}}
+.photo-grid{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:8px;
+  padding:20px 32px;
+}
+@media(max-width:1200px){
+  .photo-grid{grid-template-columns:repeat(4,1fr);}
+}
+@media(max-width:768px){
+  .photo-grid{grid-template-columns:repeat(3,1fr);gap:2px;padding:0;}
+  .photo-item{aspect-ratio:1/1;}
+}
 
 .photo-item{position:relative;overflow:hidden;background:#e4e2de;aspect-ratio:9/16;cursor:default;}
 .photo-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s ease;}
@@ -112,25 +123,15 @@ photos.forEach((name, i) => {
   item.className = 'photo-item';
   if (isVideo(name)) {
     const posterName = name.replace(/\.[^.]+$/, '.jpg');
-    item.innerHTML = `<video src="${BASE}${name}" poster="${BASE}preview/${posterName}" muted loop playsinline preload="none"></video><div class="video-play"></div>`;
+    item.innerHTML = `<video src="${BASE}${name}" poster="${BASE}preview/${posterName}" muted loop playsinline preload="metadata"></video><div class="video-play"></div>`;
+      const v = item.querySelector('video');
+      item.addEventListener('mouseenter', () => { v.play().catch(() => {}); });
+      item.addEventListener('mouseleave', () => { v.pause(); v.currentTime = 0; });
   } else {
     item.innerHTML = `<img src="${BASE}${name}" alt="" loading="lazy">`;
   }
   item.onclick = () => openLb(i);
   grid.appendChild(item);
-});
-
-grid.addEventListener('mouseover', e => {
-  const item = e.target.closest('.photo-item');
-  if (!item) return;
-  const v = item.querySelector('video');
-  if (v && v.paused) v.play();
-});
-grid.addEventListener('mouseout', e => {
-  const item = e.target.closest('.photo-item');
-  if (!item) return;
-  const v = item.querySelector('video');
-  if (v && !v.paused) { v.pause(); v.currentTime = 0; }
 });
 
 let current = 0;
