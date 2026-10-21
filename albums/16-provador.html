@@ -56,8 +56,10 @@ a{text-decoration:none;color:inherit;}
 .photo-item:hover img{transform:scale(1.05);}
 .photo-item video{
   width:100%;height:100%;object-fit:cover;display:block;
-  transition:transform .7s ease;
+  transition:transform .7s ease, opacity .25s ease;
+  opacity:0;
 }
+.photo-item video.playing{opacity:1;}
 .photo-item:hover video{transform:scale(1.05);}
 .video-badge{display:none;}
 .video-play{
@@ -200,10 +202,13 @@ if (photos.length === 0) {
     item.className = 'photo-item';
     if (isVideo(name)) {
       const posterName = name.replace(/\.[^.]+$/, '.jpg');
-      item.innerHTML = `<video src="${BASE}${name}" poster="${BASE}preview/${posterName}" muted loop playsinline preload="metadata"></video><div class="video-play"></div>`;
+      item.style.backgroundImage = `url("${BASE}preview/${posterName}")`;
+      item.style.backgroundSize = 'cover';
+      item.style.backgroundPosition = 'center';
+      item.innerHTML = `<video src="${BASE}${name}" muted loop playsinline preload="metadata"></video><div class="video-play"></div>`;
       const v = item.querySelector('video');
-      item.addEventListener('mouseenter', () => { v.play().catch(() => {}); });
-      item.addEventListener('mouseleave', () => { v.pause(); v.currentTime = 0; v.load(); });
+      item.addEventListener('mouseenter', () => { const p = v.play(); if (p) p.then(() => v.classList.add('playing')).catch(() => {}); });
+      item.addEventListener('mouseleave', () => { v.classList.remove('playing'); v.pause(); v.currentTime = 0; });
     } else {
       item.innerHTML = `<img src="${BASE}${name}" alt="" loading="lazy">`;
     }

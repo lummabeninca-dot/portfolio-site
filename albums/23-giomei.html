@@ -144,10 +144,13 @@ photos.forEach((name, i) => {
   item.className = 'photo-item';
   if (isVideo(name)) {
     const posterName = name.replace(/\.[^.]+$/, '.jpg');
-    item.innerHTML = `<video src="${BASE}${name}" poster="${BASE}preview/${posterName}" muted loop playsinline preload="metadata"></video><div class="video-play"></div>`;
+    item.style.backgroundImage = `url("${BASE}preview/${posterName}")`;
+    item.style.backgroundSize = 'cover';
+    item.style.backgroundPosition = 'center';
+    item.innerHTML = `<video src="${BASE}${name}" muted loop playsinline preload="metadata"></video><div class="video-play"></div>`;
       const v = item.querySelector('video');
-      item.addEventListener('mouseenter', () => { v.play().catch(() => {}); });
-      item.addEventListener('mouseleave', () => { v.pause(); v.currentTime = 0; v.load(); });
+      item.addEventListener('mouseenter', () => { const p = v.play(); if (p) p.then(() => v.classList.add('playing')).catch(() => {}); });
+      item.addEventListener('mouseleave', () => { v.classList.remove('playing'); v.pause(); v.currentTime = 0; });
   } else {
     item.innerHTML = `<img src="${BASE}${name}" alt="" loading="lazy">`;
   }
