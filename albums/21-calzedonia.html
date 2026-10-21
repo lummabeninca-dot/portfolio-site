@@ -36,7 +36,10 @@ a{text-decoration:none;color:inherit;}
 .photo-item{position:relative;overflow:hidden;background:#e4e2de;aspect-ratio:9/16;cursor:default;}
 .photo-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s ease;}
 .photo-item:hover img{transform:scale(1.05);}
-.photo-item video{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s ease;}
+.photo-item video{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s ease;, opacity .25s ease;
+  opacity:0;
+}
+.photo-item video.playing{opacity:1;}
 .photo-item:hover video{transform:scale(1.05);}
 .video-badge{display:none;}
 .video-play{
