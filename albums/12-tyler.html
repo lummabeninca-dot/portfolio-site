@@ -171,7 +171,7 @@ if (photos.length === 0) {
       item.innerHTML = `<video src="${BASE}${name}" poster="${BASE}preview/${posterName}" muted loop playsinline preload="metadata"></video><div class="video-play"></div>`;
       const v = item.querySelector('video');
       item.addEventListener('mouseenter', () => { v.play().catch(() => {}); });
-      item.addEventListener('mouseleave', () => { v.pause(); v.currentTime = 0; });
+      item.addEventListener('mouseleave', () => { v.pause(); v.currentTime = 0; v.load(); });
     } else {
       item.innerHTML = `<img src="${BASE}${name}" alt="" loading="lazy">`;
     }

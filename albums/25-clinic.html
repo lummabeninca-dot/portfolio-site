@@ -133,11 +133,8 @@ const photos = [
   'lacorte15.mp4',
   'lacorte16.mp4',
   'lacorte17.mp4',
-  'lacorte18.mp4',
   'lacorte19.mp4',
   'lacorte20.mp4',
-  'lacorte21.mp4',
-  'lacorte22.mp4',
   'lacorte23.mp4',
   'lacorte24.mp4',
 ];
@@ -157,7 +154,7 @@ photos.forEach((name, i) => {
     item.innerHTML = `<video src="${BASE}${name}" poster="${BASE}preview/${posterName}" muted loop playsinline preload="metadata"></video><div class="video-play"></div>`;
       const v = item.querySelector('video');
       item.addEventListener('mouseenter', () => { v.play().catch(() => {}); });
-      item.addEventListener('mouseleave', () => { v.pause(); v.currentTime = 0; });
+      item.addEventListener('mouseleave', () => { v.pause(); v.currentTime = 0; v.load(); });
   } else {
     item.innerHTML = `<img src="${BASE}${name}" alt="" loading="lazy">`;
   }
