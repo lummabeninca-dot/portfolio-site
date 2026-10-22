@@ -212,7 +212,17 @@ if (photos.length === 0) {
     if (isVideo(name)) {
       const preview = BASE + 'preview/' + name;
       const posterName = name.replace(/\.[^.]+$/, '.jpg');
-      item.innerHTML = `<video src="${preview}" poster="${BASE}preview/${posterName}" muted loop playsinline preload="none"></video><div class="video-play"></div>`;
+      const posterUrl = `${BASE}preview/${posterName}`;
+      item.style.backgroundSize = 'cover';
+      item.style.backgroundPosition = 'center';
+      item.innerHTML = `<video src="${preview}" muted loop playsinline preload="metadata"></video><div class="video-play"></div>`;
+      const v = item.querySelector('video');
+      const probe = new Image();
+      probe.onload = () => { item.style.backgroundImage = `url("${posterUrl}")`; };
+      probe.onerror = () => { v.style.opacity = '1'; };
+      probe.src = posterUrl;
+      item.addEventListener('mouseenter', () => { const p = v.play(); if (p) p.then(() => v.classList.add('playing')).catch(() => {}); });
+      item.addEventListener('mouseleave', () => { v.classList.remove('playing'); v.pause(); v.currentTime = 0; });
     } else {
       item.innerHTML = `<img src="${BASE}${name}" alt="" loading="lazy">`;
     }
